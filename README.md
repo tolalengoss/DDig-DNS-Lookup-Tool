@@ -28,15 +28,13 @@ A comprehensive web-based DNS Lookup Tool that allows users to query various DNS
 ### 🚀 Automatic Installation (Recommended)
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/dns-lookup-tool.git
-cd dns-lookup-tool
+   git clone https://github.com/yourusername/dns-lookup-tool.git
+   cd dns-lookup-tool
 
 2. Run the installation script:
-```bash
     sudo bash install.sh
     
 3. After installation, the tool will be accessible at:
-```bash
     http://your-server-ip:5000
 ```
 ## 💬 Version History
