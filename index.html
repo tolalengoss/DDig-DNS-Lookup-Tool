@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DNS Lookup Tool</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        .record-type-tab {
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .record-type-tab:hover {
+            color: #2563eb;
+        }
+    </style>
+    <script>
+        async function lookupDNS(recordType = 'A') {
+            const input = document.getElementById('domainInput').value;
+            if (!input) {
+                alert('Please enter a domain name');
+                return;
+            }
+            
+            const resultContainer = document.getElementById('resultContainer');
+            const recordsTableBody = document.getElementById('recordsTableBody');
+            const errorMessage = document.getElementById('errorMessage');
+            const domainName = document.getElementById('domainName');
+            const recordDescription = document.getElementById('recordDescription');
+
+            // Update active tab
+            document.querySelectorAll('.record-type-tab').forEach(tab => {
+                if (tab.getAttribute('data-type') === recordType) {
+                    tab.classList.add('text-blue-600', 'font-bold', 'border-b-2', 'border-blue-600');
+                    tab.classList.remove('text-gray-600');
+                } else {
+                    tab.classList.remove('text-blue-600', 'font-bold', 'border-b-2', 'border-blue-600');
+                    tab.classList.add('text-gray-600');
+                }
+            });
+
+            // Clear previous results
+            recordsTableBody.innerHTML = '';
+            errorMessage.textContent = '';
+            domainName.textContent = input;
+
+            // Update record type description
+            const descriptions = {
+                'A': 'An A record maps a domain name to the IP address (IPv4) of the computer hosting the domain. A records are used to convert a human-readable domain name into an IP address that can be understood by computers.',
+                'AAAA': 'An AAAA record maps a domain name to the IPv6 address of the computer hosting the domain. AAAA records are the IPv6 equivalent of an A record.',
+                'MX': 'An MX (Mail Exchange) record specifies the mail servers responsible for accepting email messages on behalf of a domain name. It includes a priority value to indicate preferred mail servers.',
+                'NS': 'NS (Name Server) records specify the authoritative DNS servers for a domain. These servers contain the actual DNS records for the domain.',
+                'TXT': 'TXT records are text records that can contain any text-based data. They are commonly used for domain verification, SPF records, and other domain-related text information.'
+            };
+            recordDescription.innerHTML = `
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-4">
+                    <h3 class="font-bold text-blue-800">What is a ${recordType} Record?</h3>
+                    <p class="text-blue-700 mt-2">${descriptions[recordType]}</p>
+                </div>
+            `;
+
+            try {
+                const response = await fetch(`https://dns.google/resolve?name=${input}&type=${recordType}`);
+                const data = await response.json();
+
+                if (data.Status === 0 && data.Answer) {
+                    data.Answer.forEach(record => {
+                        const row = document.createElement('tr');
+                        let recordTypeDisplay = recordType;
+                        let recordData = record.data;
+
+                        // Format the data based on record type
+                        switch(recordType) {
+                            case 'MX':
+                                recordData = `Priority: ${record.data.split(' ')[0]}, Server: ${record.data.split(' ')[1]}`;
+                                break;
+                            case 'TXT':
+                                recordData = record.data.replace(/"/g, '');
+                                break;
+                        }
+
+                        row.innerHTML = `
+                            <td class="border-b p-2">${recordTypeDisplay}</td>
+                            <td class="border-b p-2">${record.name}</td>
+                            <td class="border-b p-2">${recordData}</td>
+                            <td class="border-b p-2">${record.TTL}</td>
+                        `;
+                        recordsTableBody.appendChild(row);
+                    });
+                    resultContainer.style.display = 'block';
+                } else {
+                    throw new Error(`No ${recordType} records found for this domain.`);
+                }
+            } catch (error) {
+                errorMessage.textContent = error.message || 'Error performing DNS lookup. Please try again.';
+                resultContainer.style.display = 'block';
+            }
+        }
+
+        function changeRecordType(type) {
+            if (document.getElementById('domainInput').value) {
+                lookupDNS(type);
+            }
+        }
+
+        // Handle Enter key press
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('domainInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    lookupDNS('A');
+                }
+            });
+        });
+    </script>
+</head>
+<body class="bg-gray-100">
+    <header class="bg-white shadow">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center">
+                <i class="fas fa-toolbox text-blue-600 text-2xl mr-2"></i>
+                <span class="text-xl font-bold">IT ToolBox</span>
+            </div>
+            <nav>
+                <ul class="flex space-x-4">
+                    <li><a href="#" class="text-gray-700 hover:text-blue-600">Home</a></li>
+                    <li><a href="#" class="text-gray-700 hover:text-blue-600">Tools</a></li>
+                    <li><a href="#" class="text-gray-700 hover:text-blue-600">DNS Hosting</a></li>
+                    <li><a href="#" class="text-gray-700 hover:text-blue-600">About</a></li>
+                    <li><a href="#" class="text-gray-700 hover:text-blue-600">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold mb-4">DNS Lookup Tool</h1>
+        <div class="bg-white shadow rounded p-4 mb-8">
+            <div class="flex">
+                <input type="text" id="domainInput" placeholder="Enter domain name (e.g., example.com)" 
+                    class="flex-grow p-2 border border-gray-300 rounded-l focus:outline-none focus:border-blue-500">
+                <button onclick="lookupDNS('A')" 
+                    class="bg-blue-600 text-white px-6 py-2 rounded-r hover:bg-blue-700 transition duration-200">
+                    <i class="fas fa-search mr-2"></i>Lookup
+                </button>
+            </div>
+        </div>
+
+        <div id="resultContainer" class="bg-white shadow rounded p-4" style="display: none;">
+            <h2 class="text-xl font-bold mb-4">DNS Records for <span id="domainName"></span></h2>
+            <div id="errorMessage" class="text-red-500 mb-4"></div>
+                        <div class="mb-4">
+                <ul class="flex space-x-4 border-b">
+                    <li><a href="#" class="record-type-tab pb-2 text-blue-600 font-bold border-b-2 border-blue-600" 
+                        data-type="A" onclick="changeRecordType('A'); return false;">A</a></li>
+                    <li><a href="#" class="record-type-tab pb-2 text-gray-600 hover:text-blue-600" 
+                        data-type="AAAA" onclick="changeRecordType('AAAA'); return false;">AAAA</a></li>
+                    <li><a href="#" class="record-type-tab pb-2 text-gray-600 hover:text-blue-600" 
+                        data-type="MX" onclick="changeRecordType('MX'); return false;">MX</a></li>
+                    <li><a href="#" class="record-type-tab pb-2 text-gray-600 hover:text-blue-600" 
+                        data-type="NS" onclick="changeRecordType('NS'); return false;">NS</a></li>
+                    <li><a href="#" class="record-type-tab pb-2 text-gray-600 hover:text-blue-600" 
+                        data-type="TXT" onclick="changeRecordType('TXT'); return false;">TXT</a></li>
+                </ul>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full mb-6">
+                    <thead>
+                        <tr class="bg-gray-50">
+                            <th class="text-left p-2 border-b">Type</th>
+                            <th class="text-left p-2 border-b">Name</th>
+                            <th class="text-left p-2 border-b">Value</th>
+                            <th class="text-left p-2 border-b">TTL</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recordsTableBody"></tbody>
+                </table>
+            </div>
+
+            <div id="recordDescription" class="mt-6"></div>
+        </div>
+    </main>
+
+    <footer class="bg-gray-200 py-8">
+        <div class="container mx-auto px-4 text-center">
+            <h4 class="font-bold mb-4">Supported and Sponsored by</h4>
+            <div class="flex justify-center space-x-8 mb-8">
+                <i class="fab fa-google text-4xl text-gray-600"></i>
+                <i class="fab fa-microsoft text-4xl text-gray-600"></i>
+                <i class="fab fa-aws text-4xl text-gray-600"></i>
+                <i class="fas fa-database text-4xl text-gray-600"></i>
+            </div>
+            <div class="bg-gray-800 text-white py-4">
+                <div class="container mx-auto px-4 flex justify-between items-center">
+                    <span>© 2025 IT ToolBox. All rights reserved.</span>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-white hover:text-gray-400"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-white hover:text-gray-400"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="text-white hover:text-gray-400"><i class="fab fa-linkedin"></i></a>
+                        <a href="#" class="text-white hover:text-gray-400"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

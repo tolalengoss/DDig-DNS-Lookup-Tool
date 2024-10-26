@@ -1,0 +1,17 @@
+[Unit]
+Description=IT ToolBox Flask Application
+After=network.target
+
+[Service]
+User=root
+WorkingDirectory=/www/wwwroot/nslookup.oss.nextbackend.com
+Environment="PATH=/www/wwwroot/nslookup.oss.nextbackend.com/venv/bin"
+ExecStart=/www/wwwroot/nslookup.oss.nextbackend.com/venv/bin/python /www/wwwroot/nslookup.oss.nextbackend.com/app.py
+Restart=always
+RestartSec=10
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=ittoolbox
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,195 @@
+/* Base Styles */
+body {
+    transition: background-color 0.3s, color 0.3s;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* Light Mode Colors */
+:root {
+    --background-color: #ffffff;
+    --text-color: #2d3748;
+    --primary-color: #3498db;
+    --secondary-color: #4a5568;
+    --border-color: #e5e5e5;
+}
+
+/* Dark Mode Colors */
+.dark-mode {
+    --background-color: #1a202c; /* Dark background */
+    --text-color: #f7f7f7; /* Light text */
+    --primary-color: #63b3ed; /* Light blue */
+    --secondary-color: #a0aec0; /* Gray */
+    --border-color: #4a5568; /* Dark border */
+}
+
+/* Apply Colors */
+body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+header {
+    background-color: var(--secondary-color);
+}
+
+footer {
+    background-color: var(--border-color);
+}
+
+/* Utility Classes */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+.py-4 {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
+.px-4 {
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.mb-4 {
+    margin-bottom: 1rem;
+}
+
+.mb-6 {
+    margin-bottom: 1.5rem;
+}
+
+.mt-2 {
+    margin-top: 0.5rem;
+}
+
+.mt-6 {
+    margin-top: 1.5rem;
+}
+
+.flex {
+    display: flex;
+}
+
+.justify-between {
+    justify-content: space-between;
+}
+
+.items-center {
+    align-items: center;
+}
+
+.space-x-4 > * + * {
+    margin-left: 1rem;
+}
+
+.text-2xl {
+    font-size: 1.5rem;
+}
+
+.text-xl {
+    font-size: 1.25rem;
+}
+
+.text-lg {
+    font-size: 1.125rem;
+}
+
+.text-sm {
+    font-size: 0.875rem;
+}
+
+.w-full {
+    width: 100%;
+}
+
+.max-w-lg {
+    max-width: 32rem;
+}
+
+.mx-auto {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Button Styles */
+button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: darken(var(--primary-color), 10%);
+}
+
+/* Input Styles */
+input[type="text"] {
+    border: 1px solid var(--border-color);
+    padding: 0.5rem;
+    width: 100%;
+    border-radius: 0.25rem;
+}
+
+/* Table Styles */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+th, td {
+    padding: 0.5rem;
+    border: 1px solid var(--border-color);
+    text-align: left;
+}
+
+th {
+    background-color: var(--border-color);
+}
+
+/* Alert and Description Styles */
+.alert {
+    background-color: #ffcccb; /* Light red background */
+    color: #d8000c; /* Dark red text */
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+}
+
+.description {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 1rem;
+    border-radius: 0.25rem;
+}
+
+/* Footer Styles */
+footer {
+    padding: 2rem 0;
+}
+
+footer a {
+    color: var(--text-color);
+    text-decoration: none;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
+
+/* Font Awesome Icon Styles */
+.fab, .fas {
+    font-size: 1.5rem;
+    color: var(--text-color);
+}
+
+.fab:hover, .fas:hover {
+    color: var(--primary-color);
+}
